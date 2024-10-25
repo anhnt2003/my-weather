@@ -40,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './UI/index.html'  # Chỉ định thư mục chứa file index.html
+          path: '.' 
 
       # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
