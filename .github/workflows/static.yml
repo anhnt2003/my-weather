@@ -22,22 +22,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Check out the repository
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Step 2: Set up GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Step 3: Upload content of the Ui folder for deployment
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '/Ui/index.html'
+          path: './UI/index.html'  # Chỉ định thư mục chứa file index.html
+
+      # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
