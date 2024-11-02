@@ -7,15 +7,25 @@
     <meta name="color-scheme" content="light dark">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="styles/style.css">
     <script src="JavaScript/api-weather.js"></script>
     <title>My Weather App</title>
 </head>
 
 <body>
-    <main class="container">
-        <h1>Data Reponse From Api Weather</h1>
-        <article aria-busy="true"></article>
-        <div id="api-response"></div>
+    <main class="container-fluid">
+        <input type="search" name="search" placeholder="Tìm kiếm" aria-label="Search" />
+        <div class="weather-current-info">
+            <div class="location-detail"></div>
+            <div class="temp-info">
+                <div class="icon"></div>
+                <div class="temp"></div>
+            </div>
+            <div class="weather-title"></div>
+        </div>
+        <div class="weather-current-info-detail">
+            <article>I’m a card!</article>
+        </div>
     </main>
 </body>
 

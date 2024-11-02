@@ -1,0 +1,24 @@
+/* Body background: Gradient to mimic a sky-like feel */
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #2a5298, #87CEEB);
+    font-family: Arial, sans-serif;
+}
+
+
+/* Styling for .weather-current-info */
+
+.weather-current-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}

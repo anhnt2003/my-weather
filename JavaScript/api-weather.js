@@ -59,28 +59,31 @@ async function getWeatherForecast(latitude, longitude, days, alerts, aqi) {
 
 async function getLatLongFromPlaceName(placeName) {
     const url = `${apiUrlGetLocation}/search?q=${encodeURIComponent(placeName)}&format=json&addressdetails=1`;
+    const response = await fetch(url);
+    const data = await response.json();
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.length <= 0) {
-            console.error('No results found');
-            return null;
-        }
-        const latitude = data[0].lat;
-        const longitude = data[0].lon;
-        return { latitude, longitude };
-    } catch (error) {
-        console.error('Error fetching data:', error);
+    if (data.length <= 0) {
+        console.error('No location results found');
+        return null;
     }
+    console.log(data);
+    const latitude = data[0].lat;
+    const longitude = data[0].lon;
+    return { latitude, longitude };
+
 }
 
 async function onloadDefault() {
     const { latitude, longitude } = await getLatLongFromPlaceName("HaNoi");
     const weatherData = await getWeatherCurrent(latitude, longitude, true);
-    document.getElementById("api-response").innerText = JSON.stringify(`Nhiệt độ Hà Nội Hiện tại ${weatherData.current.temp_c}`, null, 2);
+    elementInnerText("location-detail", `${weatherData.location.country}/${weatherData.location.name}`);
+    elementInnerText("temp", `&#127782; ${weatherData.current.temp_c}°C`)
     console.log(weatherData);
+}
+
+function elementInnerText(className, text) {
+    const element = document.querySelector(`.${className}`);
+    element.innerHTML = text.toString();
 }
 
 window.onload = onloadDefault;
