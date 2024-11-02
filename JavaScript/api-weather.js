@@ -1,34 +1,86 @@
-var apiUrl = "https://api.openweathermap.org/data/3.0";
-var apiKey = "24d50da4233978f1833602ec532cc0ec";
+var apiUrl = "http://api.weatherapi.com/v1/forecast.json";
+var apiKey = "72959857e52d4fc0927160605242710";
+var apiUrlGetLocation = "https://nominatim.openstreetmap.org";
 
-async function getWeatherCurrentAndForecasts(latitude, longitude, parts) {
-  var fullPath = `${apiUrl}/onecall?lat=${latitude}&lon=${longitude}&exclude=${parts}&appid=${apiKey}`
+function builderQueryParams(latitude, longitude) {
+    const queryParams = new URLSearchParams();
+    queryParams.append("key", apiKey);
 
-  try {
-    const response = await fetch(fullPath);
-    return response.json();
-  }
-  catch(error) {
-    console.log(error);
-  }
+    if (!latitude || !longitude) {
+        alert("invalid location");
+        return;
+    }
+
+    var location = latitude + "," + longitude;
+    queryParams.append("q", location);
+    return queryParams;
 }
 
-async function getWeatherByTime(latitude, longitude, time) {
-  var fullPath = `${apiUrl}/onecall/timemachine?lat=${latitude}&lon=${longitude}&dt=${time}&appid=${apiKey}`
+async function getWeatherCurrent(latitude, longitude, aqi) {
+    var queryParams = builderQueryParams(latitude, longitude);
 
-  try {
-    const response = await fetch(fullPath);
-    return response.json();
-  }
-  catch(error) {
-    console.log(error);
-  }
+    if (aqi) {
+        queryParams.append("aqi", aqi);
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+            method: "GET"
+        });
+        return response.json();
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getWeatherForecast(latitude, longitude, days, alerts, aqi) {
+    var queryParams = builderQueryParams(latitude, longitude);
+    if (days) {
+        queryParams.append("days", days);
+    }
+
+    if (alerts) {
+        queryParams.append("alerts", alerts);
+    }
+
+    if (aqi) {
+        queryParams.append("aqi", aqi);
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}?${queryParams.toString()}`, {
+            method: "GET"
+        });
+        return response.json();
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getLatLongFromPlaceName(placeName) {
+    const url = `${apiUrlGetLocation}/search?q=${encodeURIComponent(placeName)}&format=json&addressdetails=1`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.length <= 0) {
+            console.error('No results found');
+            return null;
+        }
+        const latitude = data[0].lat;
+        const longitude = data[0].lon;
+        return { latitude, longitude };
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
 
 async function onloadDefault() {
-  const weatherData = await getWeatherCurrentAndForecasts(21.0285, 105.8542, "current");
-  document.getElementById("api-response").innerText = JSON.stringify(weatherData.message, null, 2);
-  console.log(weatherData);
+    const { latitude, longitude } = await getLatLongFromPlaceName("HaNoi");
+    const weatherData = await getWeatherCurrent(latitude, longitude, true);
+    document.getElementById("api-response").innerText = JSON.stringify(`Nhiệt độ Hà Nội Hiện tại ${weatherData.current.temp_c}`, null, 2);
+    console.log(weatherData);
 }
 
 window.onload = onloadDefault;
